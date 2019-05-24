@@ -23,6 +23,7 @@
   
  
 
+  <link href="https://www.magnetic-world.com/feeds/all.atom.xml" type="application/atom+xml" rel="alternate" title="Magnetic World Full Atom Feed" />
 
 <meta name="keywords" content="Tools">
 
@@ -142,7 +143,7 @@
 </tr>
 <tr>
 <td><code>[]</code></td>
-<td>定义一个集合，并匹配集合中列举的字符，如<code>[ab]</code>表示匹配字符<code>a</code>或<code>b</code>。也可使用字符集合区间，如<code>[0-9A-Fa-f]</code>可以匹配一位16进制数</td>
+<td>定义一个集合，并匹配集合中列举的字符，如<code>[ab]</code>表示匹配字符<code>a</code>或<code>b</code>。也可使用字符集合区间，如<code>[0-9A-Fa-f]</code>可以匹配一位 16 进制数</td>
 </tr>
 <tr>
 <td><code>^</code></td>
@@ -150,7 +151,7 @@
 </tr>
 </tbody>
 </table>
-<p>注1：匹配特定字符类别的元字符见下表</p>
+<p>注 1：匹配特定字符类别的元字符见下表</p>
 <table>
 <thead>
 <tr>
@@ -185,15 +186,15 @@
 </tr>
 <tr>
 <td><code>\x</code></td>
-<td>使用16进制匹配时需要加<code>\x</code>前缀，如<code>\x0A</code>对应ASCII码表中10代表的字符，即换行符<code>\n</code></td>
+<td>使用 16 进制匹配时需要加<code>\x</code>前缀，如<code>\x0A</code>对应 ASCII 码表中 10 代表的字符，即换行符<code>\n</code></td>
 </tr>
 <tr>
 <td><code>\0</code></td>
-<td>使用8进制匹配时需要加<code>\0</code>前缀，如<code>\011</code>对应ASCII码表中9代表的字符，即制表符<code>\t</code></td>
+<td>使用 8 进制匹配时需要加<code>\0</code>前缀，如<code>\011</code>对应 ASCII 码表中 9 代表的字符，即制表符<code>\t</code></td>
 </tr>
 </tbody>
 </table>
-<p>注2：必要时还可以使用POSIX字符类简化正则表达式，具体用法可以自行搜索。</p>
+<p>注 2：必要时还可以使用 POSIX 字符类简化正则表达式，具体用法可以自行搜索。</p>
 <hr>
 <p><a class="mk-toclify" id="2"></a></p>
 <h2>2 匹配多个字符</h2>
@@ -216,7 +217,7 @@
 </tr>
 <tr>
 <td><code>&#124;</code></td>
-<td>逻辑或，匹配某几个指定的模式，如<code>19&#124;20&#124;21</code>匹配19或20或21</td>
+<td>逻辑或，匹配某几个指定的模式，如<code>19&#124;20&#124;21</code>匹配 19 或 20 或 21</td>
 </tr>
 <tr>
 <td><code>?</code></td>
@@ -228,7 +229,7 @@
 </tr>
 </tbody>
 </table>
-<p>注3：<code>*</code>，<code>+</code>和<code>{n,}</code>都是贪婪型元字符，它们在寻找匹配时会尽可能地靠近文本的末尾而不仅限于下一个匹配。要想避免这种情况的发生，可以使用懒惰型元字符，即在贪婪型元字符的后面加上<code>?</code>后缀，如<code>*?</code>，<code>+?</code>和<code>{n,}?</code>。</p>
+<p>注 3：<code>*</code>，<code>+</code>和<code>{n,}</code>都是贪婪型元字符，它们在寻找匹配时会尽可能地靠近文本的末尾而不仅限于下一个匹配。要想避免这种情况的发生，可以使用懒惰型元字符，即在贪婪型元字符的后面加上<code>?</code>后缀，如<code>*?</code>，<code>+?</code>和<code>{n,}?</code>。</p>
 <hr>
 <p><a class="mk-toclify" id="3"></a></p>
 <h2>3 位置匹配</h2>
@@ -281,7 +282,7 @@
 </tr>
 <tr>
 <td><code>\1</code></td>
-<td>定义一个回溯引用，代表之前出现的第一个子表达式，这个用法类似于变量。如<code>&lt;[Hh]([1-6])&gt;.*?&lt;/[Hh]\1&gt;</code>可以匹配一对标题标签(H1-H6)，如果不使用回溯引用则无法检查标签首尾的配对情况（因为会匹配<code>&lt;h1&gt;&lt;/h2&gt;</code>这样的情况）。类似地，<code>\2</code>代表之前出现的第二个子表达式</td>
+<td>定义一个回溯引用，代表之前出现的第一个子表达式，这个用法类似于变量。如<code>&lt;[Hh]([1-6])&gt;.*?&lt;/[Hh]\1&gt;</code>可以匹配一对标题标签 (H1-H6)，如果不使用回溯引用则无法检查标签首尾的配对情况（因为会匹配<code>&lt;h1&gt;&lt;/h2&gt;</code>这样的情况）。类似地，<code>\2</code>代表之前出现的第二个子表达式</td>
 </tr>
 <tr>
 <td><code>$1</code></td>
@@ -303,11 +304,11 @@
 <tbody>
 <tr>
 <td><code>(?=)</code></td>
-<td>使用正向前查找指定一个必须匹配但不在结果中返回的模式，一般来说<code>?=</code>要放在子表达式中，如<code>.+(?=:)</code>可以用于在存放一些URL地址（<code>http:</code>, <code>ftp:</code> 及 <code>https:</code> 等开头的地址）的文本中找出协议名（<code>http</code>,<code>ftp</code> 及 <code>https</code>等）而不包含冒号</td>
+<td>使用正向前查找指定一个必须匹配但不在结果中返回的模式，一般来说<code>?=</code>要放在子表达式中，如<code>.+(?=:)</code>可以用于在存放一些 URL 地址（<code>http:</code>, <code>ftp:</code> 及 <code>https:</code> 等开头的地址）的文本中找出协议名（<code>http</code>,<code>ftp</code> 及 <code>https</code>等）而不包含冒号</td>
 </tr>
 <tr>
 <td><code>(?&lt;=)</code></td>
-<td>正向后查找，用法与正向前查找类似，并且可以与正向前查找结合使用。如<code>(?&lt;=&lt;[Pp]&gt;).*(?=&lt;/[Pp]&gt;)</code>可以匹配HTML文档中段落的内容而不包含<code>&lt;p&gt;&lt;/p&gt;</code>标签，一般也称这种匹配为只“消费”了段落文字</td>
+<td>正向后查找，用法与正向前查找类似，并且可以与正向前查找结合使用。如<code>(?&lt;=&lt;[Pp]&gt;).*(?=&lt;/[Pp]&gt;)</code>可以匹配 HTML 文档中段落的内容而不包含<code>&lt;p&gt;&lt;/p&gt;</code>标签，一般也称这种匹配为只 “ 消费 ” 了段落文字</td>
 </tr>
 <tr>
 <td><code>(?!)</code></td>
@@ -341,12 +342,17 @@
 </tr>
 </tbody>
 </table>
-<p>注4：正则表达式还可以使用前后查找条件，即只在一个向前查找或向后查找操作取得成功的情况下才允许执行一个表达式的条件，只要把条件中的回溯引用编号替换为一个完整的前后查找表达式即可。例如美国的邮政编码有两种格式，一种是ZIP格式（如<code>12345</code>），另一种格式是ZIP+4格式（如<code>12345-6789</code>），其中只有ZIP+4必须用连字符分隔前五位数字和后四位数字，那么可以使用<code>\d{5}(?(?=-)-\d{4})</code>来匹配。但实际中需要使用前后查找条件的场合不多，因为往往有更简单的实现方法。</p>
+<p>注 4：正则表达式还可以使用前后查找条件，即只在一个向前查找或向后查找操作取得成功的情况下才允许执行一个表达式的条件，只要把条件中的回溯引用编号替换为一个完整的前后查找表达式即可。例如美国的邮政编码有两种格式，一种是 ZIP 格式（如<code>12345</code>），另一种格式是 ZIP+4 格式（如<code>12345-6789</code>），其中只有 ZIP+4 必须用连字符分隔前五位数字和后四位数字，那么可以使用<code>\d{5}(?(?=-)-\d{4})</code>来匹配。但实际中需要使用前后查找条件的场合不多，因为往往有更简单的实现方法。</p>
       </div><!-- .entry-content -->
       <br />
       <div class="article_meta">
         Tags:
-          <a href="https://www.magnetic-world.com/tag/tools.html">Tools</a>      </div>
+          <a href="https://www.magnetic-world.com/tag/tools.html">Tools</a>        <br />
+          Related Posts: <br />
+          <ul>
+            <li><a href="https://www.magnetic-world.com/posts/2018/Feb/padavan-frp.html">Padavan+frp 实现内网穿透</a></li>
+          </ul>
+      </div>
       <br />
     </div>
   </div>
@@ -369,8 +375,7 @@
     <footer id="colophon" class="site-footer" role="contentinfo">
       <div class="site-info container">
         <div class="row">
-                    <div class="copyright col-md-12">
-                    <a href="https://www.magnetic-world.com/pages/privacy-policy">Privacy Policy</a> | 
+                    <div class="copyright col-md-12"> 
                     <a href="https://www.magnetic-world.com/feeds/all.atom.xml">Atom Feed</a> | 
                     <a href="https://www.magnetic-world.com/sitemap.xml">Sitemap</a><br />
                     This site uses the <a href="https://github.com/limbenjamin/voce">voce</a> theme by <a href="//limbenjamin.com/">Benjamin Lim</a><br />
