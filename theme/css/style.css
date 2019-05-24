@@ -462,6 +462,10 @@ article.post .entry-title.index-post-list, .entry-content.index-post-list {
 .article_meta {
   font-family: 'Montserrat';
 }
+div.article_meta ul li{
+  font-family: 'Noto Serif SC', serif;
+  font-weight: 300;
+}
 /* end of edited content */
 
 /* Masonary style */
