@@ -130,7 +130,7 @@
 <h2>1 问题背景</h2>
 <hr>
 <p>不在学校，最大的问题就是无法使用某些校内的资源。我们学校的毕业设计平台只能在校内网访问，不仅如此，学校购买的数据库在校外也无法使用。我第一个想到的是 VPN，然而查了一下，发现我们学校的 VPN 只供教职工使用 ……</p>
-<p><img alt="vpn unavailable" src="http://p4nsa2k2j.bkt.clouddn.com//180224frp/vpn.png"></p>
+<p><img align="center" alt="vpn unavailable" src="https://www.magnetic-world.com/posts/2018/Feb/vpn.png"></p>
 <p>看来官方渠道我是享受不到了。</p>
 <p>但是，论文是不可能花钱买的，这辈子都不会花钱买的，校外又用不了学校的数据库，上不了校内网，只能靠自力更生维持一下生活了。</p>
 <hr>
@@ -226,7 +226,7 @@
 </li>
 </ul>
 <p>首先是 dashboard。由于 frp 在服务端中已经集成了 dashboard，只需要在配置文件里添加<code>dashboard_port = 7500</code>即可。启动服务端后就可以使用<code>http://[server_addr]:7500</code>访问 dashboard 界面，用户名密码默认均为<code>admin</code>，且可以通过<code>dashboard_user</code>和<code>dashboard_pwd</code>两个字段来修改用户名和密码。</p>
-<p><img alt="frp dashboard" src="http://p4nsa2k2j.bkt.clouddn.com//180224frp/frp_dashboard.png"></p>
+<p><img align="center" alt="frp dashboard" src="https://www.magnetic-world.com/posts/2018/Feb/frp_dashboard.png"></p>
 <p>然后是远程访问路由器设置页面，实际上就是访问部署在内网的 Web 服务。这个功能也是很常用的，比如调试 Web 页面等场景都用得到。在 frp 中只需设置<code>vhost_http_port</code>即可，如<code>vhost_http_port = 8080</code>，然后启动服务端即可，接下来的设置在客户端完成。</p>
 <p>最后是用于访问校内网的代理，我这里选择了 http 代理，方便手机使用。这里的设置全部在客户端完成，接下来会提到。</p>
 <hr>
