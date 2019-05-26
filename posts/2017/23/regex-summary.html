@@ -1,0 +1,457 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="author" content="Allen Shen">
+  <meta name="description" content="常用正则表达式总结 | 写在前面：看完了一本正则表达式的书，过了一段时间打算用的时候却发现很多东西都忘了，得从头看书查找用法，所以这个总结就当做是我的学习笔记吧。 Table of Contents 1 匹配单个字符 2 匹配多个字符 3 位置匹配 4 子表达式与回溯引用 5 前后查找 6...">
+
+  <link rel="icon" type="image/png" href="https://www.magnetic-world.com/meta/favicon-16x16.png" sizes="16x16">
+  <link rel="icon" type="image/png" href="https://www.magnetic-world.com/meta/favicon-32x32.png" sizes="32x32">  
+  <link rel="icon" type="image/png" href="https://www.magnetic-world.com/meta/favicon-96x96.png" sizes="96x96">
+
+  <link rel="stylesheet" href="//cdn.bootcss.com/twitter-bootstrap/3.3.6/css/bootstrap.min.css" type="text/css" media="all">
+  <link rel="stylesheet" href="https://www.magnetic-world.com/theme/css/font.css" type="text/css" media="all">
+  <link rel="stylesheet" href="//cdn.bootcss.com/font-awesome/4.7.0/css/font-awesome.min.css">
+  <link rel="stylesheet" href="https://www.magnetic-world.com/theme/css/style.css" type="text/css" media="all">
+
+  <link href="https://www.magnetic-world.com/feeds/all.atom.xml" type="application/atom+xml" rel="alternate" title="Magnetic World Full Atom Feed" />
+  <link href="https://www.magnetic-world.com/feeds/all.rss.xml" type="application/rss+xml" rel="alternate" title="Magnetic World Full RSS Feed" />
+
+<meta name="keywords" content="Tools">
+
+
+  <title>常用正则表达式总结 | Magnetic World</title>
+
+<script>
+  (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+  (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+  m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+  })(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+
+  ga('create', 'UA-140671825-1', 'auto');
+  ga('send', 'pageview');
+
+</script>
+  
+</head>
+
+<body class="home blog">
+  <div>
+    <header class="site-header">
+      <nav class="navbar navbar-default" role="navigation">
+        <div class="container">
+          <div class="row">
+            <div class="site-navigation-inner col-sm-12">
+              <div class="navbar-header">
+                <button type="button" class="btn navbar-toggle" data-toggle="collapse" data-target=".navbar-ex1-collapse">
+                  <span class="sr-only">Toggle navigation</span>
+                  <span class="icon-bar"></span>
+                  <span class="icon-bar"></span>
+                  <span class="icon-bar"></span>
+                </button>
+              </div>
+              <div class="collapse navbar-collapse navbar-ex1-collapse">
+              <ul id="menu-all-pages" class="nav navbar-nav">
+                <li class="menu-item"><a href="https://www.magnetic-world.com/index.html" >INDEX
+<i class="fa  fa-lg"></i></a></li>
+                <li class="menu-item"><a href="https://www.magnetic-world.com/pages/about" >ABOUT ME
+<i class="fa  fa-lg"></i></a></li>
+              </ul>
+              </div>
+              <div class="social">   
+                <a data-email="moc.kooltuo@dlrow-citengam:otliam" data-title="Email" title="You need javascript enabled to view this email" class="email">
+<i class="fa fa-envelope fa-lg"></i></a>
+                <a href="https://github.com/magnetic2014" title="GitHub" >
+<i class="fa fa-github fa-lg"></i></a>
+              </div>
+            </div>
+          </div>
+        </div>
+      </nav><!-- .site-navigation -->
+
+      <div class="container">
+      <div id="logo">
+        <span class="site-name"><a class="navbar-brand" href="https://www.magnetic-world.com"><img width="310" src="https://www.magnetic-world.com/meta/logo.jpg" class="attachment-full size-full" alt="logo">          </a>
+        </span><!-- end of .site-name -->
+      </div><!-- end of #logo -->
+        <div class="tagline">
+                <a href="https://www.magnetic-world.com/tag/tools.html" >Tools (2)</a> &#124; 
+                <a href="https://www.magnetic-world.com/archives.html" >Archives (2)</a>
+        </div>
+    </div>
+
+  </header><!-- #masthead -->
+  </div>
+  <div id="content" class="site-content">
+    <div class="container main-content-area">
+      <div class="row">
+        <div class="main-content-inner col-sm-12 col-md-12">
+          <div id="primary" class="content-area">
+            <div id="main" class="site-main" role="main">
+              <div class="article-container">
+<article>
+  <div class="blog-item-wrap">
+    <div class="post-inner-content">
+      <header class="entry-header page-header">
+        <span class="cat-item"><time datetime="2017-02-23 00:00:00+08:00">2月 23, 2017</time></span>
+        <h1 class="entry-title"><a href="https://www.magnetic-world.com/posts/2017/23/regex-summary.html">常用正则表达式总结</a></h1>
+      </header><!-- .entry-header -->
+      <div class="fb-like" data-href="https://www.magnetic-world.com/posts/2017/23/regex-summary.html" data-layout="standard" data-action="like" data-show-faces="false" data-share="true"></div>
+      <div class="entry-content">
+    	<blockquote>
+<p>写在前面：看完了一本正则表达式的书，过了一段时间打算用的时候却发现很多东西都忘了，得从头看书查找用法，所以这个总结就当做是我的学习笔记吧。</p>
+</blockquote>
+<p><a class="mk-toclify" id="table-of-contents"></a></p>
+<hr>
+<h2>Table of Contents</h2>
+<hr>
+<ul>
+<li><a href="#1">1 匹配单个字符</a></li>
+<li><a href="#2">2 匹配多个字符</a></li>
+<li><a href="#3">3 位置匹配</a></li>
+<li><a href="#4">4 子表达式与回溯引用</a></li>
+<li><a href="#5">5 前后查找</a></li>
+<li><a href="#6">6 正则表达式里的条件</a></li>
+</ul>
+<hr>
+<p><a class="mk-toclify" id="1"></a></p>
+<h2>1 匹配单个字符</h2>
+<hr>
+<table>
+<thead>
+<tr>
+<th>表达式</th>
+<th>匹配模式</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>.</code></td>
+<td>单个任意字符</td>
+</tr>
+<tr>
+<td><code>\</code></td>
+<td>转义字符，用于搜索有特殊含义的字符（也叫元字符）本身，如<code>\\</code>搜索字符<code>\</code>，<code>\.</code>搜索字符<code>.</code>等，也用于使普通字符成为元字符，如<code>\r</code>表示回车符，<code>\n</code>表示换行符等</td>
+</tr>
+<tr>
+<td><code>[]</code></td>
+<td>定义一个集合，并匹配集合中列举的字符，如<code>[ab]</code>表示匹配字符<code>a</code>或<code>b</code>。也可使用字符集合区间，如<code>[0-9A-Fa-f]</code>可以匹配一位 16 进制数</td>
+</tr>
+<tr>
+<td><code>^</code></td>
+<td>取反匹配，如<code>[^0-9]</code>匹配一个不是数字的字符</td>
+</tr>
+</tbody>
+</table>
+<p>注 1：匹配特定字符类别的元字符见下表</p>
+<table>
+<thead>
+<tr>
+<th>元字符</th>
+<th>匹配模式</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>\d</code></td>
+<td>任何一个数字字符，等价于<code>[0-9]</code></td>
+</tr>
+<tr>
+<td><code>\D</code></td>
+<td>任何一个非数字字符，等价于<code>[^0-9]</code>，注意：元字符中同一个字母的大小写往往代表相反的含义</td>
+</tr>
+<tr>
+<td><code>\w</code></td>
+<td>任何一个字母数字或下划线字符，等价于<code>[a-zA-Z0-9_]</code></td>
+</tr>
+<tr>
+<td><code>\W</code></td>
+<td>任何一个非字母数字下划线字符，等价于<code>[^a-zA-Z0-9_]</code></td>
+</tr>
+<tr>
+<td><code>\s</code></td>
+<td>任何一个空白字符，等价于<code>[\f\n\r\t\v]</code></td>
+</tr>
+<tr>
+<td><code>\S</code></td>
+<td>任何一个非空白字符，等价于<code>[^\f\n\r\t\v]</code></td>
+</tr>
+<tr>
+<td><code>\x</code></td>
+<td>使用 16 进制匹配时需要加<code>\x</code>前缀，如<code>\x0A</code>对应 ASCII 码表中 10 代表的字符，即换行符<code>\n</code></td>
+</tr>
+<tr>
+<td><code>\0</code></td>
+<td>使用 8 进制匹配时需要加<code>\0</code>前缀，如<code>\011</code>对应 ASCII 码表中 9 代表的字符，即制表符<code>\t</code></td>
+</tr>
+</tbody>
+</table>
+<p>注 2：必要时还可以使用 POSIX 字符类简化正则表达式，具体用法可以自行搜索。</p>
+<hr>
+<p><a class="mk-toclify" id="2"></a></p>
+<h2>2 匹配多个字符</h2>
+<hr>
+<table>
+<thead>
+<tr>
+<th>表达式</th>
+<th>匹配模式</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>+</code></td>
+<td>匹配一个或多个字符，如<code>\d+</code>匹配一个或多个数字字符</td>
+</tr>
+<tr>
+<td><code>*</code></td>
+<td>匹配零个或多个字符</td>
+</tr>
+<tr>
+<td><code>&#124;</code></td>
+<td>逻辑或，匹配某几个指定的模式，如<code>19&#124;20&#124;21</code>匹配 19 或 20 或 21</td>
+</tr>
+<tr>
+<td><code>?</code></td>
+<td>匹配零个或一个字符，如<code>https?:</code>匹配<code>http:</code>或<code>https:</code></td>
+</tr>
+<tr>
+<td><code>{}</code></td>
+<td>设定重复匹配次数，如<code>\d{3}</code>匹配三个连续的数字，<code>\d{2,4}</code>匹配两个、三个或四个连续的数字，<code>\d{2,}</code>匹配至少两个连续的数字</td>
+</tr>
+</tbody>
+</table>
+<p>注 3：<code>*</code>，<code>+</code>和<code>{n,}</code>都是贪婪型元字符，它们在寻找匹配时会尽可能地靠近文本的末尾而不仅限于下一个匹配。要想避免这种情况的发生，可以使用懒惰型元字符，即在贪婪型元字符的后面加上<code>?</code>后缀，如<code>*?</code>，<code>+?</code>和<code>{n,}?</code>。</p>
+<hr>
+<p><a class="mk-toclify" id="3"></a></p>
+<h2>3 位置匹配</h2>
+<hr>
+<table>
+<thead>
+<tr>
+<th>表达式</th>
+<th>匹配模式</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>\b</code></td>
+<td>匹配一个单词的开始或结尾。<code>\b</code>实际上匹配的是一个能构成单词的字符和一个不能构成单词的字符之间的位置，如<code>\bhis\b</code>仅匹配<code>his</code>这个单词而不匹配<code>this</code>这样包含<code>his</code>三个字母的单词</td>
+</tr>
+<tr>
+<td><code>\B</code></td>
+<td>匹配一个非单词边界，即两个能构成单词的字符或两个不能构成单词的字符之间。如<code>\B_\B</code>可以用来查找前后都有多余空格的下划线</td>
+</tr>
+<tr>
+<td><code>^</code></td>
+<td>匹配字符串的开头。如<code>^cat</code>只匹配文本前三个字母是<code>cat</code>的情况，对于其他的<code>cat</code>则不匹配</td>
+</tr>
+<tr>
+<td><code>$</code></td>
+<td>匹配字符串的结尾。如<code>cat$</code>只匹配文本最后三个字母为<code>cat</code>的情况，对于其他的<code>cat</code>则不匹配</td>
+</tr>
+<tr>
+<td><code>(?m)</code></td>
+<td>启用分行匹配模式，此时<code>^</code>不仅匹配字符串开头，还匹配换行符后的开始位置；<code>$</code>不仅匹配字符串结尾，还将匹配换行符后面的结束位置。如<code>(?m)^\s*//.*$</code>可以匹配所有的单行注释内容（以<code>//</code>开头）</td>
+</tr>
+</tbody>
+</table>
+<hr>
+<p><a class="mk-toclify" id="4"></a></p>
+<h2>4 子表达式与回溯引用</h2>
+<hr>
+<table>
+<thead>
+<tr>
+<th>表达式</th>
+<th>匹配模式</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>()</code></td>
+<td>定义一个子表达式，可以将几个表达式组合起来当做一个独立元素来使用，如<code>(cat){2,}</code>可以匹配<code>catcatcat</code>这样的文本。如果不加括号直接使用<code>cat{2,}</code>，则只能匹配<code>catttttt</code>这样的文本。</td>
+</tr>
+<tr>
+<td><code>\1</code></td>
+<td>定义一个回溯引用，代表之前出现的第一个子表达式，这个用法类似于变量。如<code>&lt;[Hh]([1-6])&gt;.*?&lt;/[Hh]\1&gt;</code>可以匹配一对标题标签 (H1-H6)，如果不使用回溯引用则无法检查标签首尾的配对情况（因为会匹配<code>&lt;h1&gt;&lt;/h2&gt;</code>这样的情况）。类似地，<code>\2</code>代表之前出现的第二个子表达式</td>
+</tr>
+<tr>
+<td><code>$1</code></td>
+<td>与<code>\1</code>含义相同，多用于替换中，但各语言的实现有差异，具体用到时再查。替换时将匹配的模式分为几个子表达式，然后使用回溯引用来表示并替换即可。如使用<code>(\w+[\w\.]*@[\w\.]+\.\w+)</code>可以匹配一个电子邮件地址，再使用<code>&lt;a href="mailto:$1"&gt;$1&lt;/a&gt;</code>替换为可点击的地址</td>
+</tr>
+</tbody>
+</table>
+<hr>
+<p><a class="mk-toclify" id="5"></a></p>
+<h2>5 前后查找</h2>
+<hr>
+<table>
+<thead>
+<tr>
+<th>表达式</th>
+<th>匹配模式</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>(?=)</code></td>
+<td>使用正向前查找指定一个必须匹配但不在结果中返回的模式，一般来说<code>?=</code>要放在子表达式中，如<code>.+(?=:)</code>可以用于在存放一些 URL 地址（<code>http:</code>, <code>ftp:</code> 及 <code>https:</code> 等开头的地址）的文本中找出协议名（<code>http</code>,<code>ftp</code> 及 <code>https</code>等）而不包含冒号</td>
+</tr>
+<tr>
+<td><code>(?&lt;=)</code></td>
+<td>正向后查找，用法与正向前查找类似，并且可以与正向前查找结合使用。如<code>(?&lt;=&lt;[Pp]&gt;).*(?=&lt;/[Pp]&gt;)</code>可以匹配 HTML 文档中段落的内容而不包含<code>&lt;p&gt;&lt;/p&gt;</code>标签，一般也称这种匹配为只 “ 消费 ” 了段落文字</td>
+</tr>
+<tr>
+<td><code>(?!)</code></td>
+<td>负向前查找，将向前查找不与给定模式相匹配的文本，类似于对正向前查找取非</td>
+</tr>
+<tr>
+<td><code>(?&lt;!)</code></td>
+<td>负向后查找，将向后查找不与给定模式相匹配的文本，类似于对正向后查找取非。例如在包含价格（如<code>$30</code>）和数量（如<code>30</code>）的文本中，<code>\b(?&lt;!\$)\d+\b</code>可以只匹配数量而不匹配价格</td>
+</tr>
+</tbody>
+</table>
+<hr>
+<p><a class="mk-toclify" id="6"></a></p>
+<h2>6 正则表达式里的条件</h2>
+<hr>
+<table>
+<thead>
+<tr>
+<th>表达式</th>
+<th>匹配模式</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>(?(back-reference)true-regex)</code></td>
+<td>当括号中的<code>back-reference</code>（回溯引用）存在时，执行<code>true-regex</code>代表的子表达式。如<code>(&lt;[Aa]\s+[^&gt;]+&gt;\s*)?&lt;[Ii][Mm][Gg]\s+[^&gt;]+&gt;(?(1)\s*&lt;/[Aa]&gt;)</code>匹配的是这样的模式：找出<code>&lt;img&gt;&lt;/img&gt;</code>标签，且如果标签是一个链接，就把外面嵌套的<code>&lt;a&gt;&lt;/a&gt;</code>标签也找出来。其中，在条件里，回溯引用编号<code>1</code>不需要被转义</td>
+</tr>
+<tr>
+<td><code>(?(back-reference)true-regex|false-regex)</code></td>
+<td>与上面的表达式类似，只不过在回溯引用不存在时将执行<code>false-regex</code>（类似于<code>if-else</code>语句）</td>
+</tr>
+</tbody>
+</table>
+<p>注 4：正则表达式还可以使用前后查找条件，即只在一个向前查找或向后查找操作取得成功的情况下才允许执行一个表达式的条件，只要把条件中的回溯引用编号替换为一个完整的前后查找表达式即可。例如美国的邮政编码有两种格式，一种是 ZIP 格式（如<code>12345</code>），另一种格式是 ZIP+4 格式（如<code>12345-6789</code>），其中只有 ZIP+4 必须用连字符分隔前五位数字和后四位数字，那么可以使用<code>\d{5}(?(?=-)-\d{4})</code>来匹配。但实际中需要使用前后查找条件的场合不多，因为往往有更简单的实现方法。</p>
+      </div><!-- .entry-content -->
+      <br />
+      <div class="article_meta">
+        Tags:
+          <a href="https://www.magnetic-world.com/tag/tools.html">Tools</a>        <br /><br />
+          Related Posts: <br />
+          <ul>
+            <li><a href="https://www.magnetic-world.com/posts/2018/25/padavan-frp.html">Padavan+frp 实现内网穿透</a></li>
+          </ul>
+      </div>
+      <br />
+    </div>
+  </div>
+</article><!-- #post-## -->
+              </div>
+              <div id="valine-comments">
+                <!-- comment area-->
+              </div>
+            </div><!-- #main -->
+          </div><!-- #primary -->
+        </div>
+      </div><!-- close .row -->
+    </div><!-- close .container -->
+  </div><!-- close .site-content -->
+
+
+
+
+  <div id="footer-area">
+    <footer id="colophon" class="site-footer" role="contentinfo">
+      <div class="site-info container">
+        <div class="row">
+                    <div class="copyright col-md-12"> 
+                    <a href="https://www.magnetic-world.com/feeds/all.atom.xml">Atom Feed</a> | 
+                    <a href="https://www.magnetic-world.com/feeds/all.rss.xml">RSS Feed</a> | 
+                    <a href="https://www.magnetic-world.com/sitemap.xml">Sitemap</a><br />
+                    This site uses the <a href="https://github.com/limbenjamin/voce">voce</a> theme by <a href="//limbenjamin.com/">Benjamin Lim</a><br />
+                    &copy; 2012-2019 <a href="https://www.magnetic-world.com">Allen Shen</a> </div>
+        </div>
+      </div><!-- .site-info -->
+      <div class="scroll-to-top" style="display: none;"><i class="fa fa-angle-up"></i></div><!-- .scroll-to-top -->
+    </footer><!-- #colophon -->
+  </div>
+
+  <script type="text/javascript" src="//cdn.bootcss.com/jquery/3.2.1/jquery.min.js"></script>
+  <script type="text/javascript" src="//cdn.bootcss.com/modernizr/2.8.3/modernizr.min.js"></script>
+  <script type="text/javascript" src="//cdn.bootcss.com/twitter-bootstrap/3.3.6/js/bootstrap.min.js"></script>
+  <script type="text/javascript" src="https://www.magnetic-world.com/theme/js/functions.min.js"></script>
+
+  <script type="text/javascript">
+    window.addEventListener('load', function(){
+    if (window.location.pathname != '/' && window.location.pathname != '/index.html'){
+      window.scroll(0, document.getElementById('main').offsetTop);
+    }})
+  </script>
+
+  <script type="text/javascript">
+    window.addEventListener('load', function(){
+      var e = document.querySelectorAll(".email");
+      for (var i = 0; i < e.length; i++) {
+        var email = e[i].getAttribute("data-email")
+        var title = e[i].getAttribute("data-title")
+        if (email){
+          e[i].href = email.split("").reverse().join("");
+          e[i].removeAttribute("data-email");
+          e[i].removeAttribute("data-title");
+          e[i].removeAttribute("class");
+          if (title){
+            e[i].setAttribute("title", title);
+          }
+          else{
+            e[i].removeAttribute("title");
+          }
+        }
+      }
+    })
+  </script>
+
+
+
+
+  <!--载入js，在</body>之前插入即可-->
+  <!--Leancloud 操作库:-->
+  <script src="////cloud.panjunwen.com/av-min.js"></script>
+  <!--Valine 的核心代码库-->
+  <script src="//deserts.io/assets/js/Valine.min.js?v=a3485d7f7c" type="text/javascript"></script>
+  <script>
+    if ( $("#valine-comments").length > 0 ) {
+        new Valine({
+            av: AV,
+            el: '#valine-comments',
+            maxNest: 2,
+            pageSize: 4,
+            emoticon_url: 'https://cloud.panjunwen.com/alu',
+            emoticon_list: ["吐.png", "喷血.png", "狂汗.png", "不说话.png", "汗.png", "坐等.png", "献花.png", "不高兴.png", "中刀.png", "害羞.png", "皱眉.png", "小眼睛.png", "中指.png", "尴尬.png", "瞅你.png", "想一想.png", "中枪.png", "得意.png", "肿包.png", "扇耳光.png", "亲亲.png", "惊喜.png", "脸红.png", "无所谓.png", "便便.png", "愤怒.png", "蜡烛.png", "献黄瓜.png", "内伤.png", "投降.png", "观察.png", "看不见.png", "击掌.png", "抠鼻.png", "邪恶.png", "看热闹.png", "口水.png", "抽烟.png", "锁眉.png", "装大款.png", "吐舌.png", "无奈.png", "长草.png", "赞一个.png", "呲牙.png", "无语.png", "阴暗.png", "不出所料.png", "咽气.png", "期待.png", "高兴.png", "吐血倒地.png", "哭泣.png", "欢呼.png", "黑线.png", "喜极而泣.png", "喷水.png", "深思.png", "鼓掌.png", "暗地观察.png"],
+            app_id: 'TtLSNlwTOFSMqDY3EbSkmtDC-gzGzoHsz',
+            app_key: 'iAtWMiSHHic3VIrnkNywjrqy',
+            placeholder: 'Write a Comment'
+        });
+    }
+  </script>
+
+  <script>
+    (function(){
+        var bp = document.createElement('script');
+        var curProtocol = window.location.protocol.split(':')[0];
+        if (curProtocol === 'https') {
+            bp.src = 'https://zz.bdstatic.com/linksubmit/push.js';
+        }
+        else {
+            bp.src = 'http://push.zhanzhang.baidu.com/push.js';
+        }
+        var s = document.getElementsByTagName("script")[0];
+        s.parentNode.insertBefore(bp, s);
+    })();
+  </script>
+</body>
+</html>

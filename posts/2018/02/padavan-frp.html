@@ -1,0 +1,429 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="author" content="Allen Shen">
+  <meta name="description" content="Padavan+frp 实现内网穿透 | 写在前面：近期出国做毕业设计，走之前我觉得可能会有访问校内资源的需求，因此想通过宿舍的路由器访问学校内网。本文比较了几种常用的实现内网穿透的方法，并记录了 frp 的配置过程及遇到的问题。 Table of Contents 1 问题背景 2 技术选型 2.1...">
+
+  <link rel="icon" type="image/png" href="https://www.magnetic-world.com/meta/favicon-16x16.png" sizes="16x16">
+  <link rel="icon" type="image/png" href="https://www.magnetic-world.com/meta/favicon-32x32.png" sizes="32x32">  
+  <link rel="icon" type="image/png" href="https://www.magnetic-world.com/meta/favicon-96x96.png" sizes="96x96">
+
+  <link rel="stylesheet" href="//cdn.bootcss.com/twitter-bootstrap/3.3.6/css/bootstrap.min.css" type="text/css" media="all">
+  <link rel="stylesheet" href="https://www.magnetic-world.com/theme/css/font.css" type="text/css" media="all">
+  <link rel="stylesheet" href="//cdn.bootcss.com/font-awesome/4.7.0/css/font-awesome.min.css">
+  <link rel="stylesheet" href="https://www.magnetic-world.com/theme/css/style.css" type="text/css" media="all">
+
+  <link href="https://www.magnetic-world.com/feeds/all.atom.xml" type="application/atom+xml" rel="alternate" title="Magnetic World Full Atom Feed" />
+  <link href="https://www.magnetic-world.com/feeds/all.rss.xml" type="application/rss+xml" rel="alternate" title="Magnetic World Full RSS Feed" />
+
+<meta name="keywords" content="Tools">
+
+
+  <title>Padavan+frp 实现内网穿透 | Magnetic World</title>
+
+<script>
+  (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+  (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+  m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+  })(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+
+  ga('create', 'UA-140671825-1', 'auto');
+  ga('send', 'pageview');
+
+</script>
+  
+</head>
+
+<body class="home blog">
+  <div>
+    <header class="site-header">
+      <nav class="navbar navbar-default" role="navigation">
+        <div class="container">
+          <div class="row">
+            <div class="site-navigation-inner col-sm-12">
+              <div class="navbar-header">
+                <button type="button" class="btn navbar-toggle" data-toggle="collapse" data-target=".navbar-ex1-collapse">
+                  <span class="sr-only">Toggle navigation</span>
+                  <span class="icon-bar"></span>
+                  <span class="icon-bar"></span>
+                  <span class="icon-bar"></span>
+                </button>
+              </div>
+              <div class="collapse navbar-collapse navbar-ex1-collapse">
+              <ul id="menu-all-pages" class="nav navbar-nav">
+                <li class="menu-item"><a href="https://www.magnetic-world.com/index.html" >INDEX
+<i class="fa  fa-lg"></i></a></li>
+                <li class="menu-item"><a href="https://www.magnetic-world.com/pages/about" >ABOUT ME
+<i class="fa  fa-lg"></i></a></li>
+              </ul>
+              </div>
+              <div class="social">   
+                <a data-email="moc.kooltuo@dlrow-citengam:otliam" data-title="Email" title="You need javascript enabled to view this email" class="email">
+<i class="fa fa-envelope fa-lg"></i></a>
+                <a href="https://github.com/magnetic2014" title="GitHub" >
+<i class="fa fa-github fa-lg"></i></a>
+              </div>
+            </div>
+          </div>
+        </div>
+      </nav><!-- .site-navigation -->
+
+      <div class="container">
+      <div id="logo">
+        <span class="site-name"><a class="navbar-brand" href="https://www.magnetic-world.com"><img width="310" src="https://www.magnetic-world.com/meta/logo.jpg" class="attachment-full size-full" alt="logo">          </a>
+        </span><!-- end of .site-name -->
+      </div><!-- end of #logo -->
+        <div class="tagline">
+                <a href="https://www.magnetic-world.com/tag/tools.html" >Tools (2)</a> &#124; 
+                <a href="https://www.magnetic-world.com/archives.html" >Archives (2)</a>
+        </div>
+    </div>
+
+  </header><!-- #masthead -->
+  </div>
+  <div id="content" class="site-content">
+    <div class="container main-content-area">
+      <div class="row">
+        <div class="main-content-inner col-sm-12 col-md-12">
+          <div id="primary" class="content-area">
+            <div id="main" class="site-main" role="main">
+              <div class="article-container">
+<article>
+  <div class="blog-item-wrap">
+    <div class="post-inner-content">
+      <header class="entry-header page-header">
+        <span class="cat-item"><time datetime="2018-02-25 00:00:00+08:00">2月 25, 2018</time></span>
+        <h1 class="entry-title"><a href="https://www.magnetic-world.com/posts/2018/02/padavan-frp.html">Padavan+frp 实现内网穿透</a></h1>
+      </header><!-- .entry-header -->
+      <div class="fb-like" data-href="https://www.magnetic-world.com/posts/2018/02/padavan-frp.html" data-layout="standard" data-action="like" data-show-faces="false" data-share="true"></div>
+      <div class="entry-content">
+    	<blockquote>
+<p>写在前面：近期出国做毕业设计，走之前我觉得可能会有访问校内资源的需求，因此想通过宿舍的路由器访问学校内网。本文比较了几种常用的实现内网穿透的方法，并记录了 frp 的配置过程及遇到的问题。</p>
+</blockquote>
+<p><a class="mk-toclify" id="table-of-contents"></a></p>
+<hr>
+<h2>Table of Contents</h2>
+<hr>
+<ul>
+<li><a href="#1">1 问题背景</a></li>
+<li><a href="#2">2 技术选型</a><ul>
+<li><a href="#21-ddns">2.1 DDNS</a></li>
+<li><a href="#22-ngrok">2.2 Ngrok</a></li>
+<li><a href="#23-frp">2.3 frp</a></li>
+</ul>
+</li>
+<li><a href="#3-frp">3 frp 服务端配置</a><ul>
+<li><a href="#31-frp">3.1 下载 frp 服务端</a></li>
+<li><a href="#32">3.2 具体配置</a></li>
+</ul>
+</li>
+<li><a href="#4-frp">4 frp 客户端配置</a></li>
+<li><a href="#5">5 遇到的问题</a></li>
+<li><a href="#6">6 后记</a></li>
+<li><a href="#7-reference">7 Reference</a></li>
+</ul>
+<hr>
+<p><a class="mk-toclify" id="1"></a></p>
+<h2>1 问题背景</h2>
+<hr>
+<p>不在学校，最大的问题就是无法使用某些校内的资源。我们学校的毕业设计平台只能在校内网访问，不仅如此，学校购买的数据库在校外也无法使用。我第一个想到的是 VPN，然而查了一下，发现我们学校的 VPN 只供教职工使用 ……</p>
+<p><img align="center" alt="vpn unavailable" src="https://www.magnetic-world.com/posts/2018/02/vpn.png"></p>
+<p>看来官方渠道我是享受不到了。</p>
+<p>但是，论文是不可能花钱买的，这辈子都不会花钱买的，校外又用不了学校的数据库，上不了校内网，只能靠自力更生维持一下生活了。</p>
+<hr>
+<p><a class="mk-toclify" id="2"></a></p>
+<h2>2 技术选型</h2>
+<hr>
+<p><a class="mk-toclify" id="21-ddns"></a></p>
+<h3>2.1 DDNS</h3>
+<p>首先我想到的是 DDNS，这是我想到的最容易实现的一个方案了。</p>
+<p>现在大家用的公网 IP 基本都是动态分配的，只要定时将自己的某个域名解析为当前使用的 IP 就可以了。</p>
+<p>我现在的 magnetic.world 域名是放在 DNSPod 上解析的，而 DNSPod 提供了功能比较齐全的 API，操作起来也比较容易。这里有一个造好的轮子：<a href="https://github.com/anrip/ArDNSPod">ArDNSPod</a>，有兴趣的朋友可以尝试一下。</p>
+<p>这个方案的问题是：单纯的 DDNS 适合能分配到独立公网 IP 的家庭宽带使用，而学校的 IP 相对来说比较紧张，所以在实际操作中校园网还使用了 NAT 技术，而此时每个学生是没有自己的独立公网 IP 的，此时 DDNS 就不起作用了。</p>
+<p>在此基础上，可以再配合 NAT 穿透实现域名与某个特定联网设备的映射（即 NAT-DDNS），但是实现较为麻烦。现在市面上流行的解决方案 —— 花生壳就是采用这种技术，这里不再赘述。没有用花生壳的主要原因就是不想花钱，而免费服务又太不稳定。</p>
+<p><a class="mk-toclify" id="22-ngrok"></a></p>
+<h3>2.2 Ngrok</h3>
+<p>Ngrok 作为另一款常用的内网穿透工具，也可以满足我这次的需求。事实上，我之前连接宿舍里的树莓派时使用的就是 Ngrok。但是这次为什么没有用呢？因为官方编译好的版本只能使用官方的 ngrok.com 服务，而其免费服务并不尽如人意。</p>
+<p>如果有自己的服务器的话，自然是用自己的服务器比较舒服。然而如果想用自己的服务器，就必须将嵌入的官方证书换成自己的证书，所以要自己编译客户端和服务器端，比较麻烦。</p>
+<p>另一个问题是 Ngrok 1.x 是开源的，但是已经停止开发。而做出了重大改进的 2.x 却暂时没有开源。Ngrok 1.x 还存在许多<a href="https://github.com/inconshreveable/ngrok#production-use">已知问题</a>，这样的工具用起来我感觉不太放心。</p>
+<p>还有一个问题是 Ngrok 1.x 不支持 udp（2.x 没试过），对于想玩游戏的人来说显然不太友好。虽然我的需求里并没有玩游戏这一条，但是我还是更倾向于使用功能更完善的工具 —— 万一哪天用到了呢？</p>
+<p>总结一下我没有选择 Ngrok 的原因：</p>
+<ul>
+<li>
+<p>开源版本停止开发，闭源版本只能使用官方服务，限制较多</p>
+</li>
+<li>
+<p>即使是开源版本也需要自己编译才能使用自己的服务器</p>
+</li>
+<li>
+<p>开源版本存在许多已知问题，并且不支持 udp</p>
+</li>
+</ul>
+<p><a class="mk-toclify" id="23-frp"></a></p>
+<h3>2.3 frp</h3>
+<p>最后我决定使用 frp 实现我的需求，它和 Ngrok 一样，都是 C-S 架构的反向代理。我为什么选择它呢？原因有以下几个：</p>
+<ul>
+<li>
+<p>代码开源，有已编译好的各平台二进制包</p>
+</li>
+<li>
+<p>所有设置可以通过一个配置文件完成，无需手动编译</p>
+</li>
+<li>
+<p>可以热加载配置文件，不需要重启服务</p>
+</li>
+<li>
+<p>非常容易部署，几乎可以说是开箱即用</p>
+</li>
+<li>
+<p>不占用服务端 80 端口，不影响 Web 服务器工作</p>
+</li>
+<li>
+<p>支持 udp 转发，支持 ssh，可一次性映射多个端口</p>
+</li>
+<li>
+<p>有 Dashboard，方便查看工作状态</p>
+</li>
+<li>
+<p>内置多种插件，可实现 http 和 socks5 代理</p>
+</li>
+<li>
+<p>可实现 P2P 内网穿透，数据流量可以不经过服务器</p>
+</li>
+<li>
+<p>国人开发，有详细的<a href="https://github.com/fatedier/frp/blob/master/README_zh.md">中文文档</a>，其他功能可查阅文档</p>
+</li>
+</ul>
+<p>确定使用 frp 后，就该进行具体的配置了。实际上 frp 的配置十分简单，只需要设置几个基本参数即可。以下是我的配置过程，供各位参考。</p>
+<hr>
+<p><a class="mk-toclify" id="3-frp"></a></p>
+<h2>3 frp 服务端配置</h2>
+<hr>
+<p><a class="mk-toclify" id="31-frp"></a></p>
+<h3>3.1 下载 frp 服务端</h3>
+<p>这里首先注意一点，frp 服务端和客户端版本要一致。因为根据作者的说法，目前的交互协议可能随时改变，不保证向后兼容，所以以后更新时也要同时升级服务端和客户端。我使用的是目前的最新版本 ——v0.16.0，以下的配置也仅供此版本参考。</p>
+<p>我用的是搬瓦工的 VPS，系统是 64 位 CentOS 7，ssh 登录上去以后，直接使用<code>wget</code>或<code>curl</code>下载作者编译好的二进制包即可。这里我下载的是 64 位 linux 版本：</p>
+<p><code>wget https://github.com/fatedier/frp/releases/download/v0.16.0/frp_0.16.0_linux_amd64.tar.gz</code></p>
+<p>再用<code>tar</code>解压之：</p>
+<p><code>tar xvzf frp_0.16.0_linux_amd64.tar.gz</code></p>
+<p>进入解压后的文件夹中，就可以看到 frp 的客户端<code>frpc</code>和服务端<code>frps</code>，以及它们的配置文件了，这里我直接使用<code>frps.ini</code>这个配置文件。</p>
+<p><a class="mk-toclify" id="32"></a></p>
+<h3>3.2 具体配置</h3>
+<p>有两个最基本的配置要先弄好：frp 配置文件中默认的工作端口为 7000，可以修改 bind_port 字段来更换端口；接下来设置 privilege_token 字段，用于身份验证，注意服务端和客户端的 token 必须相同。</p>
+<p>根据我的需求，我需要以下功能：</p>
+<ul>
+<li>
+<p>一个 dashboard，用于监控 frp 的工作状态</p>
+</li>
+<li>
+<p>远程访问路由器的设置页面，用于监控路由器的工作状态</p>
+</li>
+<li>
+<p>一个 http 或 socks5 代理，用于访问校内网</p>
+</li>
+</ul>
+<p>首先是 dashboard。由于 frp 在服务端中已经集成了 dashboard，只需要在配置文件里添加<code>dashboard_port = 7500</code>即可。启动服务端后就可以使用<code>http://[server_addr]:7500</code>访问 dashboard 界面，用户名密码默认均为<code>admin</code>，且可以通过<code>dashboard_user</code>和<code>dashboard_pwd</code>两个字段来修改用户名和密码。</p>
+<p><img align="center" alt="frp dashboard" src="https://www.magnetic-world.com/posts/2018/02/frp_dashboard.png"></p>
+<p>然后是远程访问路由器设置页面，实际上就是访问部署在内网的 Web 服务。这个功能也是很常用的，比如调试 Web 页面等场景都用得到。在 frp 中只需设置<code>vhost_http_port</code>即可，如<code>vhost_http_port = 8080</code>，然后启动服务端即可，接下来的设置在客户端完成。</p>
+<p>最后是用于访问校内网的代理，我这里选择了 http 代理，方便手机使用。这里的设置全部在客户端完成，接下来会提到。</p>
+<hr>
+<p><a class="mk-toclify" id="4-frp"></a></p>
+<h2>4 frp 客户端配置</h2>
+<hr>
+<p>我使用的 Padavan 固件中集成了 frp，首次使用的时候需要先更新一下。由于我的路由器处于内网中，因此需要运行客户端。</p>
+<p>通过路由器的设置页面就可以方便地修改 frp 的启动参数。首先是服务器的 IP 地址，端口和 token，对应的字段分别是<code>server_addr</code>，<code>server_port</code>和<code>privilege_token</code>，值与服务端相同。</p>
+<p>由于 dashboard 集成在服务端，因此客户端就不需要额外的设置了。
+接下来是内网 Web 服务的设置，在配置文件的<code>[web]</code>中有以下属性：</p>
+<ul>
+<li>
+<p><code>privilege_mode</code>：特权模式</p>
+</li>
+<li>
+<p><code>type</code>：可选<code>http</code>或<code>https</code></p>
+</li>
+<li>
+<p><code>local_ip</code>：Web 服务的内网 ip 地址</p>
+</li>
+<li>
+<p><code>local_port</code>：Web 服务的内网端口</p>
+</li>
+<li>
+<p><code>use_gzip</code>：是否压缩</p>
+</li>
+<li>
+<p><code>custom_domains</code>：映射后在外网访问时的域名，如果不设置的话就只能通过<code>http://[server_ip]:[vhost_http_port]</code>访问服务。有自己的域名和服务器的话可以设置一条 A 或者 CNAME 记录到自己已有的 IP 地址 / 域名上，就可以改用<code>http://[server_domain]:[vhost_http_port]</code>访问服务了</p>
+</li>
+</ul>
+<p>因此，只要设置好以后开启客户端，在连接到服务端后就可以通过访问<code>http://[server_addr]:8080</code>即可访问路由器的设置页面了，同时可以通过查看服务端的日志文件<code>frps.log</code>来获取当前的工作和连接情况。</p>
+<p>代理的设置较为简单，只需设置<code>type</code>，<code>remote_port</code>和<code>plugin</code>三个字段即可。如果是 http 代理，那么<code>plugin</code>设置为<code>http_proxy</code>；如果是 socks5 代理，那么<code>plugin</code>设置为<code>socks5</code>即可。最后只需将浏览器的代理设置为<code>[server_ip]:[remote_port]</code>即可通过客户端所在机器访问互联网，从而实现访问校内网的功能。</p>
+<hr>
+<p><a class="mk-toclify" id="5"></a></p>
+<h2>5 遇到的问题</h2>
+<hr>
+<p>由于我的服务器在国外，所以出现了一个小问题。一开始启动服务端和客户端后一直报错：<code>Accept new mux stream error: broken pipe</code>，后来在网上搜索了一下，发现问题出在 frp 的服务端和客户端通信时，时间戳会被用于加密验证中，防止报文被劫持后被其他人利用，因此服务端所在机器和客户端所在机器的时间相差不能超过 15 分钟，否则会报错。修改了服务器的时区后，问题就解决了。当然也可以在配置文件中修改<code>authentication_timeout</code>参数（默认为 900，即 15 分钟），如果修改为 0，则不会对时间戳进行校验。但是出于安全因素考虑，我感觉还是保持默认参数比较好吧。</p>
+<p>另一个需要注意的地方是 frp 需要配置的端口比较多，尤其是同时要用到大量的 frp 功能的时候。如果你的服务器上还有很多其他的服务的话，最好查一下端口，防止冲突。</p>
+<hr>
+<p><a class="mk-toclify" id="6"></a></p>
+<h2>6 后记</h2>
+<hr>
+<p>当我把 frp 弄完以后，我发现 frp 的玩法还是很多的。以代理为例：</p>
+<table>
+<thead>
+<tr>
+<th align="center">客户端位置</th>
+<th align="center">服务端位置</th>
+<th align="center">应用场景</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td align="center">校内</td>
+<td align="center">校外</td>
+<td align="center">下载论文、访问校内网站</td>
+</tr>
+<tr>
+<td align="center">国内</td>
+<td align="center">国外</td>
+<td align="center">在国外使用国内的音视频服务</td>
+</tr>
+<tr>
+<td align="center">国外</td>
+<td align="center">国内</td>
+<td align="center">你懂的，而且支持 udp 转发，可以玩游戏</td>
+</tr>
+</tbody>
+</table>
+<p>除此之外，frp 还支持 p2p 内网穿透和简单的文件访问服务，两者结合起来，应该可以做一个 p2p 网盘，而且流量不经过服务器，不会影响服务器的其他服务。</p>
+<p>至于其他玩法，大家可以尽情探索～</p>
+<hr>
+<p><a class="mk-toclify" id="7-reference"></a></p>
+<h2>7 Reference</h2>
+<hr>
+<p><a href="https://cloud.tencent.com/developer/article/1005974">NAT 穿透原理浅浅说（一）</a></p>
+<p><a href="https://hsk.oray.com/news/3888.html">五大 NAT 穿透方法，解决内网问题</a></p>
+<p><a href="https://www.openwrtdl.com/wordpress/ngrok%E4%BA%A4%E4%BA%92%E6%B5%81%E7%A8%8B%E5%8F%8A%E5%8E%9F%E7%90%86%E8%A7%A3%E6%9E%90">ngrok 交互流程及原理解析</a></p>
+<p><a href="https://xingtingyang.com/866.html">使用 ngrok+shadowsocks 穿透内网校外也能畅快看论文</a></p>
+<p><a href="https://blog.hihuyang.com/?p=99">Ngrok 替代品：frp，支持 UDP 协议的反向代理</a></p>
+<p><a href="http://www.right.com.cn/forum/thread-191839-1-1.html">老毛子固件使用 frp 进行内网穿透</a></p>
+<p><a href="https://github.com/fatedier/frp/blob/master/README_zh.md">frp 中文文档</a></p>
+      </div><!-- .entry-content -->
+      <br />
+      <div class="article_meta">
+        Tags:
+          <a href="https://www.magnetic-world.com/tag/tools.html">Tools</a>        <br /><br />
+          Related Posts: <br />
+          <ul>
+            <li><a href="https://www.magnetic-world.com/posts/2017/02/regex-summary.html">常用正则表达式总结</a></li>
+          </ul>
+      </div>
+      <br />
+    </div>
+  </div>
+</article><!-- #post-## -->
+              </div>
+              <div id="valine-comments">
+                <!-- comment area-->
+              </div>
+            </div><!-- #main -->
+          </div><!-- #primary -->
+        </div>
+      </div><!-- close .row -->
+    </div><!-- close .container -->
+  </div><!-- close .site-content -->
+
+
+
+
+  <div id="footer-area">
+    <footer id="colophon" class="site-footer" role="contentinfo">
+      <div class="site-info container">
+        <div class="row">
+                    <div class="copyright col-md-12"> 
+                    <a href="https://www.magnetic-world.com/feeds/all.atom.xml">Atom Feed</a> | 
+                    <a href="https://www.magnetic-world.com/feeds/all.rss.xml">RSS Feed</a> | 
+                    <a href="https://www.magnetic-world.com/sitemap.xml">Sitemap</a><br />
+                    This site uses the <a href="https://github.com/limbenjamin/voce">voce</a> theme by <a href="//limbenjamin.com/">Benjamin Lim</a><br />
+                    &copy; 2012-2019 <a href="https://www.magnetic-world.com">Allen Shen</a> </div>
+        </div>
+      </div><!-- .site-info -->
+      <div class="scroll-to-top" style="display: none;"><i class="fa fa-angle-up"></i></div><!-- .scroll-to-top -->
+    </footer><!-- #colophon -->
+  </div>
+
+  <script type="text/javascript" src="//cdn.bootcss.com/jquery/3.2.1/jquery.min.js"></script>
+  <script type="text/javascript" src="//cdn.bootcss.com/modernizr/2.8.3/modernizr.min.js"></script>
+  <script type="text/javascript" src="//cdn.bootcss.com/twitter-bootstrap/3.3.6/js/bootstrap.min.js"></script>
+  <script type="text/javascript" src="https://www.magnetic-world.com/theme/js/functions.min.js"></script>
+
+  <script type="text/javascript">
+    window.addEventListener('load', function(){
+    if (window.location.pathname != '/' && window.location.pathname != '/index.html'){
+      window.scroll(0, document.getElementById('main').offsetTop);
+    }})
+  </script>
+
+  <script type="text/javascript">
+    window.addEventListener('load', function(){
+      var e = document.querySelectorAll(".email");
+      for (var i = 0; i < e.length; i++) {
+        var email = e[i].getAttribute("data-email")
+        var title = e[i].getAttribute("data-title")
+        if (email){
+          e[i].href = email.split("").reverse().join("");
+          e[i].removeAttribute("data-email");
+          e[i].removeAttribute("data-title");
+          e[i].removeAttribute("class");
+          if (title){
+            e[i].setAttribute("title", title);
+          }
+          else{
+            e[i].removeAttribute("title");
+          }
+        }
+      }
+    })
+  </script>
+
+
+
+
+  <!--载入js，在</body>之前插入即可-->
+  <!--Leancloud 操作库:-->
+  <script src="////cloud.panjunwen.com/av-min.js"></script>
+  <!--Valine 的核心代码库-->
+  <script src="//deserts.io/assets/js/Valine.min.js?v=a3485d7f7c" type="text/javascript"></script>
+  <script>
+    if ( $("#valine-comments").length > 0 ) {
+        new Valine({
+            av: AV,
+            el: '#valine-comments',
+            maxNest: 2,
+            pageSize: 4,
+            emoticon_url: 'https://cloud.panjunwen.com/alu',
+            emoticon_list: ["吐.png", "喷血.png", "狂汗.png", "不说话.png", "汗.png", "坐等.png", "献花.png", "不高兴.png", "中刀.png", "害羞.png", "皱眉.png", "小眼睛.png", "中指.png", "尴尬.png", "瞅你.png", "想一想.png", "中枪.png", "得意.png", "肿包.png", "扇耳光.png", "亲亲.png", "惊喜.png", "脸红.png", "无所谓.png", "便便.png", "愤怒.png", "蜡烛.png", "献黄瓜.png", "内伤.png", "投降.png", "观察.png", "看不见.png", "击掌.png", "抠鼻.png", "邪恶.png", "看热闹.png", "口水.png", "抽烟.png", "锁眉.png", "装大款.png", "吐舌.png", "无奈.png", "长草.png", "赞一个.png", "呲牙.png", "无语.png", "阴暗.png", "不出所料.png", "咽气.png", "期待.png", "高兴.png", "吐血倒地.png", "哭泣.png", "欢呼.png", "黑线.png", "喜极而泣.png", "喷水.png", "深思.png", "鼓掌.png", "暗地观察.png"],
+            app_id: 'TtLSNlwTOFSMqDY3EbSkmtDC-gzGzoHsz',
+            app_key: 'iAtWMiSHHic3VIrnkNywjrqy',
+            placeholder: 'Write a Comment'
+        });
+    }
+  </script>
+
+  <script>
+    (function(){
+        var bp = document.createElement('script');
+        var curProtocol = window.location.protocol.split(':')[0];
+        if (curProtocol === 'https') {
+            bp.src = 'https://zz.bdstatic.com/linksubmit/push.js';
+        }
+        else {
+            bp.src = 'http://push.zhanzhang.baidu.com/push.js';
+        }
+        var s = document.getElementsByTagName("script")[0];
+        s.parentNode.insertBefore(bp, s);
+    })();
+  </script>
+</body>
+</html>
