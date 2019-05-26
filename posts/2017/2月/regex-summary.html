@@ -5,7 +5,7 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <meta name="author" content="Allen Shen">
-  <meta name="description" content="常用正则表达式总结 | 写在前面：看完了一本正则表达式的书，过了一段时间打算用的时候却发现很多东西都忘了，得从头看书查找用法，所以这个总结就当做是我的学习笔记吧。 [TOC] 1 匹配单个字符 表达式 匹配模式 . 单个任意字符 \...">
+  <meta name="description" content="常用正则表达式总结 | 写在前面：看完了一本正则表达式的书，过了一段时间打算用的时候却发现很多东西都忘了，得从头看书查找用法，所以这个总结就当做是我的学习笔记吧。 Table of Contents 1 匹配单个字符 2 匹配多个字符 3 位置匹配 4 子表达式与回溯引用 5 前后查找 6...">
 
   <link rel="icon" type="image/png" href="https://www.magnetic-world.com/meta/favicon-16x16.png" sizes="16x16">
   <link rel="icon" type="image/png" href="https://www.magnetic-world.com/meta/favicon-32x32.png" sizes="32x32">  
@@ -103,8 +103,20 @@
     	<blockquote>
 <p>写在前面：看完了一本正则表达式的书，过了一段时间打算用的时候却发现很多东西都忘了，得从头看书查找用法，所以这个总结就当做是我的学习笔记吧。</p>
 </blockquote>
-<p>[TOC]</p>
+<p><a class="mk-toclify" id="table-of-contents"></a></p>
 <hr>
+<h2>Table of Contents</h2>
+<hr>
+<ul>
+<li><a href="#1">1 匹配单个字符</a></li>
+<li><a href="#2">2 匹配多个字符</a></li>
+<li><a href="#3">3 位置匹配</a></li>
+<li><a href="#4">4 子表达式与回溯引用</a></li>
+<li><a href="#5">5 前后查找</a></li>
+<li><a href="#6">6 正则表达式里的条件</a></li>
+</ul>
+<hr>
+<p><a class="mk-toclify" id="1"></a></p>
 <h2>1 匹配单个字符</h2>
 <hr>
 <table>
@@ -178,6 +190,7 @@
 </table>
 <p>注 2：必要时还可以使用 POSIX 字符类简化正则表达式，具体用法可以自行搜索。</p>
 <hr>
+<p><a class="mk-toclify" id="2"></a></p>
 <h2>2 匹配多个字符</h2>
 <hr>
 <table>
@@ -212,6 +225,7 @@
 </table>
 <p>注 3：<code>*</code>，<code>+</code>和<code>{n,}</code>都是贪婪型元字符，它们在寻找匹配时会尽可能地靠近文本的末尾而不仅限于下一个匹配。要想避免这种情况的发生，可以使用懒惰型元字符，即在贪婪型元字符的后面加上<code>?</code>后缀，如<code>*?</code>，<code>+?</code>和<code>{n,}?</code>。</p>
 <hr>
+<p><a class="mk-toclify" id="3"></a></p>
 <h2>3 位置匹配</h2>
 <hr>
 <table>
@@ -245,6 +259,7 @@
 </tbody>
 </table>
 <hr>
+<p><a class="mk-toclify" id="4"></a></p>
 <h2>4 子表达式与回溯引用</h2>
 <hr>
 <table>
@@ -270,6 +285,7 @@
 </tbody>
 </table>
 <hr>
+<p><a class="mk-toclify" id="5"></a></p>
 <h2>5 前后查找</h2>
 <hr>
 <table>
@@ -299,6 +315,7 @@
 </tbody>
 </table>
 <hr>
+<p><a class="mk-toclify" id="6"></a></p>
 <h2>6 正则表达式里的条件</h2>
 <hr>
 <table>

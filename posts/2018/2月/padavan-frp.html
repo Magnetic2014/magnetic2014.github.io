@@ -5,7 +5,7 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <meta name="author" content="Allen Shen">
-  <meta name="description" content="Padavan+frp 实现内网穿透 | 写在前面：近期出国做毕业设计，走之前我觉得可能会有访问校内资源的需求，因此想通过宿舍的路由器访问学校内网。本文比较了几种常用的实现内网穿透的方法，并记录了 frp 的配置过程及遇到的问题。 [TOC] 1 问题背景...">
+  <meta name="description" content="Padavan+frp 实现内网穿透 | 写在前面：近期出国做毕业设计，走之前我觉得可能会有访问校内资源的需求，因此想通过宿舍的路由器访问学校内网。本文比较了几种常用的实现内网穿透的方法，并记录了 frp 的配置过程及遇到的问题。 Table of Contents 1 问题背景 2 技术选型 2.1...">
 
   <link rel="icon" type="image/png" href="https://www.magnetic-world.com/meta/favicon-16x16.png" sizes="16x16">
   <link rel="icon" type="image/png" href="https://www.magnetic-world.com/meta/favicon-32x32.png" sizes="32x32">  
@@ -103,8 +103,30 @@
     	<blockquote>
 <p>写在前面：近期出国做毕业设计，走之前我觉得可能会有访问校内资源的需求，因此想通过宿舍的路由器访问学校内网。本文比较了几种常用的实现内网穿透的方法，并记录了 frp 的配置过程及遇到的问题。</p>
 </blockquote>
-<p>[TOC]</p>
+<p><a class="mk-toclify" id="table-of-contents"></a></p>
 <hr>
+<h2>Table of Contents</h2>
+<hr>
+<ul>
+<li><a href="#1">1 问题背景</a></li>
+<li><a href="#2">2 技术选型</a><ul>
+<li><a href="#21-ddns">2.1 DDNS</a></li>
+<li><a href="#22-ngrok">2.2 Ngrok</a></li>
+<li><a href="#23-frp">2.3 frp</a></li>
+</ul>
+</li>
+<li><a href="#3-frp">3 frp 服务端配置</a><ul>
+<li><a href="#31-frp">3.1 下载 frp 服务端</a></li>
+<li><a href="#32">3.2 具体配置</a></li>
+</ul>
+</li>
+<li><a href="#4-frp">4 frp 客户端配置</a></li>
+<li><a href="#5">5 遇到的问题</a></li>
+<li><a href="#6">6 后记</a></li>
+<li><a href="#7-reference">7 Reference</a></li>
+</ul>
+<hr>
+<p><a class="mk-toclify" id="1"></a></p>
 <h2>1 问题背景</h2>
 <hr>
 <p>不在学校，最大的问题就是无法使用某些校内的资源。我们学校的毕业设计平台只能在校内网访问，不仅如此，学校购买的数据库在校外也无法使用。我第一个想到的是 VPN，然而查了一下，发现我们学校的 VPN 只供教职工使用 ……</p>
@@ -112,14 +134,17 @@
 <p>看来官方渠道我是享受不到了。</p>
 <p>但是，论文是不可能花钱买的，这辈子都不会花钱买的，校外又用不了学校的数据库，上不了校内网，只能靠自力更生维持一下生活了。</p>
 <hr>
+<p><a class="mk-toclify" id="2"></a></p>
 <h2>2 技术选型</h2>
 <hr>
+<p><a class="mk-toclify" id="21-ddns"></a></p>
 <h3>2.1 DDNS</h3>
 <p>首先我想到的是 DDNS，这是我想到的最容易实现的一个方案了。</p>
 <p>现在大家用的公网 IP 基本都是动态分配的，只要定时将自己的某个域名解析为当前使用的 IP 就可以了。</p>
 <p>我现在的 magnetic.world 域名是放在 DNSPod 上解析的，而 DNSPod 提供了功能比较齐全的 API，操作起来也比较容易。这里有一个造好的轮子：<a href="https://github.com/anrip/ArDNSPod">ArDNSPod</a>，有兴趣的朋友可以尝试一下。</p>
 <p>这个方案的问题是：单纯的 DDNS 适合能分配到独立公网 IP 的家庭宽带使用，而学校的 IP 相对来说比较紧张，所以在实际操作中校园网还使用了 NAT 技术，而此时每个学生是没有自己的独立公网 IP 的，此时 DDNS 就不起作用了。</p>
 <p>在此基础上，可以再配合 NAT 穿透实现域名与某个特定联网设备的映射（即 NAT-DDNS），但是实现较为麻烦。现在市面上流行的解决方案 —— 花生壳就是采用这种技术，这里不再赘述。没有用花生壳的主要原因就是不想花钱，而免费服务又太不稳定。</p>
+<p><a class="mk-toclify" id="22-ngrok"></a></p>
 <h3>2.2 Ngrok</h3>
 <p>Ngrok 作为另一款常用的内网穿透工具，也可以满足我这次的需求。事实上，我之前连接宿舍里的树莓派时使用的就是 Ngrok。但是这次为什么没有用呢？因为官方编译好的版本只能使用官方的 ngrok.com 服务，而其免费服务并不尽如人意。</p>
 <p>如果有自己的服务器的话，自然是用自己的服务器比较舒服。然而如果想用自己的服务器，就必须将嵌入的官方证书换成自己的证书，所以要自己编译客户端和服务器端，比较麻烦。</p>
@@ -137,6 +162,7 @@
 <p>开源版本存在许多已知问题，并且不支持 udp</p>
 </li>
 </ul>
+<p><a class="mk-toclify" id="23-frp"></a></p>
 <h3>2.3 frp</h3>
 <p>最后我决定使用 frp 实现我的需求，它和 Ngrok 一样，都是 C-S 架构的反向代理。我为什么选择它呢？原因有以下几个：</p>
 <ul>
@@ -173,8 +199,10 @@
 </ul>
 <p>确定使用 frp 后，就该进行具体的配置了。实际上 frp 的配置十分简单，只需要设置几个基本参数即可。以下是我的配置过程，供各位参考。</p>
 <hr>
+<p><a class="mk-toclify" id="3-frp"></a></p>
 <h2>3 frp 服务端配置</h2>
 <hr>
+<p><a class="mk-toclify" id="31-frp"></a></p>
 <h3>3.1 下载 frp 服务端</h3>
 <p>这里首先注意一点，frp 服务端和客户端版本要一致。因为根据作者的说法，目前的交互协议可能随时改变，不保证向后兼容，所以以后更新时也要同时升级服务端和客户端。我使用的是目前的最新版本 ——v0.16.0，以下的配置也仅供此版本参考。</p>
 <p>我用的是搬瓦工的 VPS，系统是 64 位 CentOS 7，ssh 登录上去以后，直接使用<code>wget</code>或<code>curl</code>下载作者编译好的二进制包即可。这里我下载的是 64 位 linux 版本：</p>
@@ -182,6 +210,7 @@
 <p>再用<code>tar</code>解压之：</p>
 <p><code>tar xvzf frp_0.16.0_linux_amd64.tar.gz</code></p>
 <p>进入解压后的文件夹中，就可以看到 frp 的客户端<code>frpc</code>和服务端<code>frps</code>，以及它们的配置文件了，这里我直接使用<code>frps.ini</code>这个配置文件。</p>
+<p><a class="mk-toclify" id="32"></a></p>
 <h3>3.2 具体配置</h3>
 <p>有两个最基本的配置要先弄好：frp 配置文件中默认的工作端口为 7000，可以修改 bind_port 字段来更换端口；接下来设置 privilege_token 字段，用于身份验证，注意服务端和客户端的 token 必须相同。</p>
 <p>根据我的需求，我需要以下功能：</p>
@@ -201,6 +230,7 @@
 <p>然后是远程访问路由器设置页面，实际上就是访问部署在内网的 Web 服务。这个功能也是很常用的，比如调试 Web 页面等场景都用得到。在 frp 中只需设置<code>vhost_http_port</code>即可，如<code>vhost_http_port = 8080</code>，然后启动服务端即可，接下来的设置在客户端完成。</p>
 <p>最后是用于访问校内网的代理，我这里选择了 http 代理，方便手机使用。这里的设置全部在客户端完成，接下来会提到。</p>
 <hr>
+<p><a class="mk-toclify" id="4-frp"></a></p>
 <h2>4 frp 客户端配置</h2>
 <hr>
 <p>我使用的 Padavan 固件中集成了 frp，首次使用的时候需要先更新一下。由于我的路由器处于内网中，因此需要运行客户端。</p>
@@ -230,11 +260,13 @@
 <p>因此，只要设置好以后开启客户端，在连接到服务端后就可以通过访问<code>http://[server_addr]:8080</code>即可访问路由器的设置页面了，同时可以通过查看服务端的日志文件<code>frps.log</code>来获取当前的工作和连接情况。</p>
 <p>代理的设置较为简单，只需设置<code>type</code>，<code>remote_port</code>和<code>plugin</code>三个字段即可。如果是 http 代理，那么<code>plugin</code>设置为<code>http_proxy</code>；如果是 socks5 代理，那么<code>plugin</code>设置为<code>socks5</code>即可。最后只需将浏览器的代理设置为<code>[server_ip]:[remote_port]</code>即可通过客户端所在机器访问互联网，从而实现访问校内网的功能。</p>
 <hr>
+<p><a class="mk-toclify" id="5"></a></p>
 <h2>5 遇到的问题</h2>
 <hr>
 <p>由于我的服务器在国外，所以出现了一个小问题。一开始启动服务端和客户端后一直报错：<code>Accept new mux stream error: broken pipe</code>，后来在网上搜索了一下，发现问题出在 frp 的服务端和客户端通信时，时间戳会被用于加密验证中，防止报文被劫持后被其他人利用，因此服务端所在机器和客户端所在机器的时间相差不能超过 15 分钟，否则会报错。修改了服务器的时区后，问题就解决了。当然也可以在配置文件中修改<code>authentication_timeout</code>参数（默认为 900，即 15 分钟），如果修改为 0，则不会对时间戳进行校验。但是出于安全因素考虑，我感觉还是保持默认参数比较好吧。</p>
 <p>另一个需要注意的地方是 frp 需要配置的端口比较多，尤其是同时要用到大量的 frp 功能的时候。如果你的服务器上还有很多其他的服务的话，最好查一下端口，防止冲突。</p>
 <hr>
+<p><a class="mk-toclify" id="6"></a></p>
 <h2>6 后记</h2>
 <hr>
 <p>当我把 frp 弄完以后，我发现 frp 的玩法还是很多的。以代理为例：</p>
@@ -267,6 +299,7 @@
 <p>除此之外，frp 还支持 p2p 内网穿透和简单的文件访问服务，两者结合起来，应该可以做一个 p2p 网盘，而且流量不经过服务器，不会影响服务器的其他服务。</p>
 <p>至于其他玩法，大家可以尽情探索～</p>
 <hr>
+<p><a class="mk-toclify" id="7-reference"></a></p>
 <h2>7 Reference</h2>
 <hr>
 <p><a href="https://cloud.tencent.com/developer/article/1005974">NAT 穿透原理浅浅说（一）</a></p>
