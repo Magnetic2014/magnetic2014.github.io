@@ -4,49 +4,49 @@ xsi:schemaLocation="http://www.sitemaps.org/schemas/sitemap/0.9 http://www.sitem
 xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
 
 <url>
-<loc>http://localhost:8000/</loc>
-<lastmod>2020-02-10T21:43:11-00:00</lastmod>
+<loc>https://www.magnetic-world.com/</loc>
+<lastmod>2020-02-10T21:52:53-00:00</lastmod>
 <changefreq>daily</changefreq>
 <priority>0.5</priority>
 </url>
 
 <url>
-<loc>http://localhost:8000/archives.html</loc>
-<lastmod>2020-02-10T21:43:11-00:00</lastmod>
+<loc>https://www.magnetic-world.com/archives.html</loc>
+<lastmod>2020-02-10T21:52:53-00:00</lastmod>
 <changefreq>daily</changefreq>
 <priority>0.5</priority>
 </url>
 
 <url>
-<loc>http://localhost:8000/tags.html</loc>
-<lastmod>2020-02-10T21:43:11-00:00</lastmod>
+<loc>https://www.magnetic-world.com/tags.html</loc>
+<lastmod>2020-02-10T21:52:53-00:00</lastmod>
 <changefreq>daily</changefreq>
 <priority>0.5</priority>
 </url>
 
 <url>
-<loc>http://localhost:8000/pages/about.html</loc>
+<loc>https://www.magnetic-world.com/pages/about.html</loc>
 <lastmod>2018-02-25T00:00:00+08:00</lastmod>
 <changefreq>monthly</changefreq>
 <priority>0.3</priority>
 </url>
 
 <url>
-<loc>http://localhost:8000/posts/2018/Feb/padavan-frp.html</loc>
+<loc>https://www.magnetic-world.com/posts/2018/Feb/padavan-frp.html</loc>
 <lastmod>2018-02-25T00:00:00+08:00</lastmod>
 <changefreq>monthly</changefreq>
 <priority>0.7</priority>
 </url>
 
 <url>
-<loc>http://localhost:8000/posts/2017/Feb/regex-summary.html</loc>
+<loc>https://www.magnetic-world.com/posts/2017/Feb/regex-summary.html</loc>
 <lastmod>2017-02-23T00:00:00+08:00</lastmod>
 <changefreq>monthly</changefreq>
 <priority>0.7</priority>
 </url>
 
 <url>
-<loc>http://localhost:8000/tag/tools.html</loc>
+<loc>https://www.magnetic-world.com/tag/tools.html</loc>
 <lastmod>2018-02-25T00:00:00+08:06</lastmod>
 <changefreq>daily</changefreq>
 <priority>0.5</priority>
